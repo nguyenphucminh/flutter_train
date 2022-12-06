@@ -1,304 +1,81 @@
-import 'dart:math';
-
-import 'package:flutter/material.dart';
-
-void main() {
-  runApp(const MaterialApp(
-    title: 'Shopping App',
-    home: ShoppingList(
-      products: [
-        Product(name: 'Eggs'),
-        Product(name: 'Flour'),
-        Product(name: 'Chocolate chips'),
-      ],
-    ),
-  ));
-}
-
-class Product {
-  const Product({required this.name});
-  final String name;
-}
-
-typedef CartChangedCallback = Function(Product product, bool inCart);
-
-class ShoppingListItem extends StatelessWidget {
-  ShoppingListItem({
-    required this.product,
-    required this.inCart,
-    required this.onCartChanged,
-  }) : super(key: ObjectKey(product));
-
-  final Product product;
-  final bool inCart;
-  final CartChangedCallback onCartChanged;
-
-  Color _getColor(BuildContext context) {
-    return inCart ? Colors.black54 : Theme.of(context).primaryColor;
-  }
-
-  TextStyle? _getTextStyle(BuildContext context) {
-    if (!inCart) return null;
-    return const TextStyle(
-      color: Colors.black54,
-      decoration: TextDecoration.lineThrough,
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      onTap: () {
-        onCartChanged(product, inCart);
-      },
-      leading: CircleAvatar(
-        backgroundColor: _getColor(context),
-        child: Text(product.name[0]),
-      ),
-      title: Text(
-        product.name,
-        style: _getTextStyle(context),
-      ),
-    );
-  }
-}
-
-class ShoppingList extends StatefulWidget {
-  const ShoppingList({required this.products, super.key});
-  final List<Product> products;
-  @override
-  State<ShoppingList> createState() => _ShoppingListState();
-}
-
-class _ShoppingListState extends State<ShoppingList> {
-  final _shoppingCart = <Product>{};
-  void _handleCartChanged(Product product, bool inCart) {
-    setState(() {
-      if (!inCart) {
-        _shoppingCart.add(product);
-      } else {
-        _shoppingCart.remove(product);
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Shopping List'),
-      ),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        children: widget.products.map((product) {
-          return ShoppingListItem(
-            product: product,
-            inCart: _shoppingCart.contains(product),
-            onCartChanged: _handleCartChanged,
-          );
-        }).toList(),
-      ),
-    );
-  }
-}
-
-
-// class MyApp extends StatelessWidget {
-//   const MyApp({Key? key}):super(key: key);
-//   @override
-//   Widget build(BuildContext context){
-//     return MaterialApp(
-//       home: Scaffold(
-//         appBar: AppBar(
-//           centerTitle: true,
-//           foregroundColor: Colors.black,
-//           backgroundColor: Colors.white,
-//           title: const Text("Scaffold Demo"),
-//           leading: Builder(
-//             builder: (context)=>IconButton(
-//             icon: Icon(Icons.face),
-//             onPressed: (){
-//               Scaffold.of(context).openDrawer();
-//              },
-//             )
-//           ),
-//           actions: [
-//             Icon(Icons.male), 
-//             Builder(
-//             builder: (context)=>IconButton(
-//             icon: Icon(Icons.face),
-//             onPressed: (){
-//               Scaffold.of(context).openEndDrawer();
-//              },
-//             )
-//           )
-//           ],
-//         ),
-//         drawer: Drawer(
-//           child: ElevatedButton(
-//             onPressed: (){Navigator.pop(context);}, 
-//             child: const Text('Ok'),
-//             style: ButtonStyle(
-//                 backgroundColor: MaterialStateProperty.all(Colors.red),
-//                 padding: MaterialStateProperty.all(EdgeInsets.all(50)),
-//                 textStyle: MaterialStateProperty.all(TextStyle(fontSize: 30))
-//             ),
-//           )
-//         ),
-//         endDrawer: Drawer(
-//           child: ElevatedButton(
-//             onPressed: (){Navigator.pop(context);}, 
-//             child: const Text('Cancel'),
-//             style: ElevatedButton.styleFrom(
-//                 primary: Colors.purple,
-//                 padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
-//                 textStyle: TextStyle(
-//                 fontSize: 30,
-//                 fontWeight: FontWeight.bold)),
-//           )
-//         ),
-//         body: Center(
-//           child: Row(
-//             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//             // direction: Axis.horizontal,
-//             // runSpacing: 10,
-//             // alignment: WrapAlignment.spaceBetween,
-//             children: const <Widget>[
-//               // Container(
-//               //   width: 50,
-//               //   height: 50,
-//               //   color: Colors.red,
-//               // )
-//               MyContainer(),
-//               Expanded(flex: 3, child:MyContainer()),
-//               Expanded(flex: 1, child:MyContainer()),
-//               Expanded(flex: 2, child:MyContainer()),
-//             ],
-//           ),
-//         ),
-//         backgroundColor: Colors.blueGrey,
-//         floatingActionButton: FloatingActionButton(
-//           child: Icon(Icons.share),
-//           onPressed: (){},
-//         ),
-//         floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-//         bottomNavigationBar: BottomAppBar(
-//           color: Colors.black,
-//           shape: CircularNotchedRectangle(),
-//           child: Container(
-//             height: 50,
-//             child: Text("HAPPY"),
-//           ),
-//         ),
-//       )
-//     );
-//   }
-// }
-
-// class MyApp extends StatelessWidget{
-//   @override
-//   Widget build(BuildContext context){
-//     return MaterialApp(
-//       home: Scaffold(
-//         appBar: AppBar(
-//           title: Text('Minh'),
-//         ),
-//         body: Center(
-//           child: Row(
-//             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//             // direction: Axis.horizontal,
-//             // runSpacing: 10,
-//             // alignment: WrapAlignment.spaceBetween,
-//             children: const <Widget>[
-//               // Container(
-//               //   width: 50,
-//               //   height: 50,
-//               //   color: Colors.red,
-//               // )
-//               MyContainer(),
-//               Expanded(flex: 3, child:MyContainer()),
-//               Expanded(flex: 1, child:MyContainer()),
-//               Expanded(flex: 2, child:MyContainer()),
-//             ],
-//           ),
-//         )
-//       ) 
-//     );
-//   }
-// }
-
-// class MyContainer extends StatelessWidget{
-//   const MyContainer({Key? key,}): super(key: key);
-//   @override
-//   Widget build(BuildContext context){
-//     return Container(
-//       margin: EdgeInsets.all(5),
-//       width: 50,
-//       height: 50,
-//       color: Colors.amber
-//     );
-//   }
-// }
-
-
-// class MyApp extends StatelessWidget{
-//   @override
-//   Widget build(BuildContext context){
-//     return MaterialApp(
-//       title: 'Flutter Widget Demo',
-//       theme: ThemeData(
-//         primarySwatch: Colors.green
-//       ),
-//       home: Container(
-//         child: Text("Hello", style: TextStyle(color: Colors.green[100], fontSize: 100, fontWeight: FontWeight.bold),),
-//         margin: EdgeInsets.all(30),
-//         alignment: Alignment.center,
-//         decoration: BoxDecoration(
-//           shape: BoxShape.circle,
-//           color: Colors.lightGreen
-//         ),
-//         transform: Matrix4.rotationZ( pi / 6),
-//       )
-//     );
-//   }
-// }
-
-// class CounterApp extends StatefulWidget {
-//   @override
-//   State<CounterApp> createState() => _CounterAppState();
-// }
-
-// class _CounterAppState extends State<CounterApp> {
-//   int counter = 0;
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       home: Scaffold(
-//         appBar: AppBar(
-//           title: Text('Counter App')
-//         ),
-//         body: Center(
-//           child: Text(
-//             counter.toString(),
-//             style: TextStyle(
-//               fontSize: 30,
-//               fontWeight: FontWeight.bold, 
-//               color: Colors.blue[300]
-//             )
-//           ),
-//         ),
-//         floatingActionButton: FloatingActionButton(
-//           backgroundColor: Colors.deepPurple[200],
-//           child: IconButton(
-//             color: Colors.red[800],
-//             icon: Icon(Icons.plus_one),
-//             onPressed: (){
-//               setState((){counter += 1;});
-//             },
-//           ),
-//           onPressed: (){},
-//         ),
-//       )
-//     );
-//   }
-// }
+import 'package:flutter/material.dart';  
+  
+void main() => runApp(MaterialApp(  
+  home: MyApp(),  
+));  
+  
+class MyApp extends StatefulWidget {  
+  @override  
+  _MyAppState createState() => _MyAppState();  
+}  
+  
+class _MyAppState extends State<MyApp> {  
+  final List<ListItem> _dropdownItems = [  
+    ListItem(1, "1"),  
+    ListItem(2, "2"),  
+    ListItem(3, "3"),  
+    ListItem(4, "4")  
+  ];  
+  
+  List<DropdownMenuItem<ListItem>> ?_dropdownMenuItems;  
+  ListItem ? _itemSelected;  
+  
+  void initState() {  
+    super.initState();  
+    _dropdownMenuItems = buildDropDownMenuItems(_dropdownItems);  
+    _itemSelected = _dropdownMenuItems?[1].value;  
+  }  
+  
+  List<DropdownMenuItem<ListItem>> buildDropDownMenuItems(List listItems) {  
+    List<DropdownMenuItem<ListItem>> items = List.empty(growable: true);  
+    for (ListItem listItem in listItems) {  
+      items.add(  
+        DropdownMenuItem(  
+          child: Text(listItem.name),  
+          value: listItem,  
+        ),  
+      );  
+    }  
+    return items;  
+  }  
+  
+  @override  
+  Widget build(BuildContext context) {  
+    return Scaffold(  
+      appBar: AppBar(  
+        title: Text("DropDown Button Example"),  
+      ),  
+      body: Column(  
+        children: <Widget>[  
+          Padding(  
+            padding: const EdgeInsets.all(10.0),  
+            child: Container(  
+              padding: const EdgeInsets.all(5.0),  
+              decoration: BoxDecoration(  
+                  color: Colors.greenAccent,  
+                  border: Border.all()),  
+              child: DropdownButtonHideUnderline(  
+                child: DropdownButton(  
+                    value: _itemSelected,  
+                    items: _dropdownMenuItems,  
+                    onChanged: (value) {  
+                      setState(() {  
+                        _itemSelected = value;  
+                      });  
+                    }),  
+              ),  
+            ),  
+          ),  
+          Text("We have selected ${_itemSelected?.name}"),  
+        ],  
+      ),  
+    );  
+  }  
+}  
+  
+class ListItem {  
+  int value;  
+  String name;  
+  
+  ListItem(this.value, this.name);  
+}  
