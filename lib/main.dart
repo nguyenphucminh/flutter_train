@@ -1,81 +1,85 @@
-import 'package:flutter/material.dart';  
-  
-void main() => runApp(MaterialApp(  
-  home: MyApp(),  
-));  
-  
-class MyApp extends StatefulWidget {  
-  @override  
-  _MyAppState createState() => _MyAppState();  
-}  
-  
-class _MyAppState extends State<MyApp> {  
-  final List<ListItem> _dropdownItems = [  
-    ListItem(1, "1"),  
-    ListItem(2, "2"),  
-    ListItem(3, "3"),  
-    ListItem(4, "4")  
-  ];  
-  
-  List<DropdownMenuItem<ListItem>> ?_dropdownMenuItems;  
-  ListItem ? _itemSelected;  
-  
-  void initState() {  
-    super.initState();  
-    _dropdownMenuItems = buildDropDownMenuItems(_dropdownItems);  
-    _itemSelected = _dropdownMenuItems?[1].value;  
-  }  
-  
-  List<DropdownMenuItem<ListItem>> buildDropDownMenuItems(List listItems) {  
-    List<DropdownMenuItem<ListItem>> items = List.empty(growable: true);  
-    for (ListItem listItem in listItems) {  
-      items.add(  
-        DropdownMenuItem(  
-          child: Text(listItem.name),  
-          value: listItem,  
-        ),  
-      );  
-    }  
-    return items;  
-  }  
-  
-  @override  
-  Widget build(BuildContext context) {  
-    return Scaffold(  
-      appBar: AppBar(  
-        title: Text("DropDown Button Example"),  
-      ),  
-      body: Column(  
-        children: <Widget>[  
-          Padding(  
-            padding: const EdgeInsets.all(10.0),  
-            child: Container(  
-              padding: const EdgeInsets.all(5.0),  
-              decoration: BoxDecoration(  
-                  color: Colors.greenAccent,  
-                  border: Border.all()),  
-              child: DropdownButtonHideUnderline(  
-                child: DropdownButton(  
-                    value: _itemSelected,  
-                    items: _dropdownMenuItems,  
-                    onChanged: (value) {  
-                      setState(() {  
-                        _itemSelected = value;  
-                      });  
-                    }),  
-              ),  
-            ),  
-          ),  
-          Text("We have selected ${_itemSelected?.name}"),  
-        ],  
-      ),  
-    );  
-  }  
-}  
-  
-class ListItem {  
-  int value;  
-  String name;  
-  
-  ListItem(this.value, this.name);  
-}  
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: MyHomePage(),
+    );
+  }
+}
+
+class MyHomePage extends StatefulWidget {
+  @override
+  MyHomePageState createState() => MyHomePageState();
+}
+
+class MyHomePageState extends State<MyHomePage> {
+  int counter = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      // khởi tạo MyInheritedWidget tại vị trí cha của cả MyCenterWidget và MyText
+      body: MyInheritedWidget(
+        child: MyCenterWidget(), // child là sub tree từ MyCenterWidget xuống
+        myData: counter, // data cần chia sẻ cho mấy widget child chính là counter
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          setState(() {
+            counter++;
+          });
+        },
+        child: Icon(Icons.add),
+      ),
+    );
+  }
+}
+
+// thoải mái xóa hết constructor và data trong MyCenterWidget
+class MyCenterWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: MyText(),
+    );
+  }
+}
+
+// thậm chí xóa luôn constructor và data khai báo trong MyText
+class MyText extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    // Nhờ hàm MyInheritedWidget.of ta sẽ get được data
+    // Bởi vì hàm of là hàm static nên ta có thể gọi ở bất cứ widget con nào ta muốn
+    final counter = MyInheritedWidget.of(context).myData;
+
+    // get được data thì update UI thôi :D
+    return Text('Tui là widget Text. Data của tui hiện tại là: $counter');
+  }
+}
+
+// tạo 1 InheritedWidget
+class MyInheritedWidget extends InheritedWidget {
+  MyInheritedWidget({Widget child, this.myData}) : super(child: child);
+
+  // Chỗ này muốn tạo bao nhiêu data cũng được
+  final int myData;
+  // thích truyền MyHomePageState vào cũng được như thế này:
+  // final MyHomePageState state;
+
+  @override
+  bool updateShouldNotify(MyInheritedWidget oldWidget) {
+    return false;
+  }
+
+  // mấy widget con sẽ gọi MyInheritedWidget.of(context) để truy cập được vào MyInheritedWidget lấy data
+  static MyInheritedWidget of(BuildContext context){
+    return context.dependOnInheritedWidgetOfExactType<MyInheritedWidget>();
+  }
+}
