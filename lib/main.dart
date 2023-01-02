@@ -24,7 +24,7 @@ class MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // khởi tạo MyInheritedWidget tại vị trí cha của cả MyCenterWidget và MyText
+      // khởi tạo MyInheritedWidget t ại vị trí cha của cả MyCenterWidget và MyText
       body: MyInheritedWidget(
         child: MyCenterWidget(), // child là sub tree từ MyCenterWidget xuống
         myData: counter, // data cần chia sẻ cho mấy widget child chính là counter
@@ -66,20 +66,20 @@ class MyText extends StatelessWidget {
 
 // tạo 1 InheritedWidget
 class MyInheritedWidget extends InheritedWidget {
-  MyInheritedWidget({Widget child, this.myData}) : super(child: child);
+  MyInheritedWidget({ required Widget child, required this.myData}) : super(child: child);
 
   // Chỗ này muốn tạo bao nhiêu data cũng được
   final int myData;
   // thích truyền MyHomePageState vào cũng được như thế này:
   // final MyHomePageState state;
 
-  @override
-  bool updateShouldNotify(MyInheritedWidget oldWidget) {
-    return false;
+  // mấy widget con sẽ gọi MyInheritedWidget.of(context) để truy cập được vào MyInheritedWidget lấy data
+  static MyInheritedWidget? maybeOf(BuildContext context){
+    return context.dependOnInheritedWidgetOfExactType<MyInheritedWidget>();
   }
 
-  // mấy widget con sẽ gọi MyInheritedWidget.of(context) để truy cập được vào MyInheritedWidget lấy data
-  static MyInheritedWidget of(BuildContext context){
-    return context.dependOnInheritedWidgetOfExactType<MyInheritedWidget>();
+    @override
+  bool updateShouldNotify(MyInheritedWidget oldWidget) {
+    return false;
   }
 }
