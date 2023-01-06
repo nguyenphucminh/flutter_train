@@ -1,76 +1,88 @@
-import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
-main(){
-  runApp(
-      ChangeNotifierProvider(
-        create: (_)=> MyProvider(),
-        child: MaterialApp(
-          home: HomeScreen(),
-        ),
-      )
-  );
-}
-class MyProvider extends ChangeNotifier{
-  String text = 'Hello' ;
-  Color color = Colors.red;
+import 'package:provider/provider.dart';
+import 'InfoProvider/info.dart';
 
-  void changeText(){
-    if(text == "Hello"){
-      text = "Minh";
-    }
-    else{
-      text = "Hello";
-    }
-    notifyListeners();
-  }
-  void changeColor(){
-    if(color == Colors.red){
-      color = Colors.blue;
-    }else{
-      color = Colors.red;
-    }
-    notifyListeners();
-  }
+void main(List<String> args) {
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(create: (_) => GioiTinh()),
+      ChangeNotifierProvider(create: (_) => BangCap())
+    ],
+    child: MaterialApp(home: MyApp()),
+  ));
 }
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    return Consumer<MyProvider>(
-      builder: (context, myProvider, child){
-        return Scaffold(
-          appBar: AppBar(title: const Text("Provider Demo"), backgroundColor: myProvider.color,),
-          drawer: Drawer(
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ElevatedButton(onPressed: (){
-                    myProvider.changeColor();
-                    Navigator.pop(context);
-                  }, child: const Text("Change Color")),
-                  ElevatedButton(onPressed: (){
-                    myProvider.changeText();
-                    Navigator.pop(context);
-                  }, child: const Text("Change Text")),
-                ],
-              )
-            ),
-          ),
-          body: Center(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+    return Scaffold(
+        appBar: AppBar(
+          title: Text('Radio Demo'),
+        ),
+        body: Consumer2<GioiTinh, BangCap>(
+          builder: (context, infoGioiTinh, infoBangCap, child) {
+            return Column(
               children: [
-                ElevatedButton(onPressed: (){
-                  myProvider.changeText();
-                }, child: const Text("Change Text")),
-                Text('${myProvider.text}')
+                Text('Gioi Tinh'),
+                RadioListTile<gioi_tinh?>(
+                    value: gioi_tinh.nam,
+                    title: Text('Nam'),
+                    secondary: Icon(Icons.male),
+                    groupValue: infoGioiTinh.gioiTinh,
+                    onChanged: (value) {
+                      infoGioiTinh.gioiTinh = value;
+                    }),
+                RadioListTile<gioi_tinh?>(
+                    value: gioi_tinh.nu,
+                    title: Text('Nu'),
+                    secondary: Icon(Icons.female),
+                    groupValue: infoGioiTinh.gioiTinh,
+                    onChanged: (value) {
+                      infoGioiTinh.gioiTinh = value;
+                    }),
+                Text('Bang Cap'),
+                RadioListTile<bang_cap?>(
+                    value: bang_cap.CaoDang,
+                    title: Text('Cao Dang'),
+                    groupValue: infoBangCap.bangCap,
+                    onChanged: (value) {
+                      infoBangCap.bangCap = value;
+                    }),
+                RadioListTile<bang_cap?>(
+                    value: bang_cap.DaiHoc,
+                    title: Text('Dai Hoc'),
+                    groupValue: infoBangCap.bangCap,
+                    onChanged: (value) {
+                      infoBangCap.bangCap = value;
+                    }),
+                RadioListTile<bang_cap?>(
+                    value: bang_cap.ThacSi,
+                    title: Text('Thac Si'),
+                    groupValue: infoBangCap.bangCap,
+                    onChanged: (value) {
+                      infoBangCap.bangCap = value;
+                    }),
+                RadioListTile<bang_cap?>(
+                    value: bang_cap.TienSi,
+                    title: Text('Tien Si'),
+                    groupValue: infoBangCap.bangCap,
+                    onChanged: (value) {
+                      infoBangCap.bangCap = value;
+                    }),
+                Divider(
+                  height: 100,
+                ),
+                Center(
+                  child: Text(
+                    'Thong tin ca nhan: ${infoGioiTinh.gioiTinh}, ${infoBangCap.bangCap} ',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                )
               ],
-          )),
-        );
-      }
-    );
+            );
+          },
+        ));
   }
 }
-
